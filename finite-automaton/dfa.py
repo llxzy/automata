@@ -25,11 +25,14 @@ class State:
             print("WARNING: Overwriting existing edge")
         self.edges[symbol] = st
 
+    def printState(self):
+        return self.label
 
 class DFAutomaton:
     def __init__(self, alphabet = set()):
         self.states = []
         self.initNode = None
+        self.accNodes = set()
         self.alphabet = alphabet
 
     def addNode(self, st):
@@ -38,12 +41,17 @@ class DFAutomaton:
             Checks whether the automata already contains a state with the label.
             """
             raise exceptions.NodeLabelError
+
         if not self.alphabet.issuperset(st.edges.keys()):
             """
             Checks whether the automata alphabet is a superset of the keys of the state.
             If keys contain an entry that is outside the alphabet, raises an error.
             """
             raise exceptions.AlphabetError
+
+        if st.accepting:
+            self.accNodes.add(st)
+
         if st.initial:
             if self.initNode:
                 print("ERROR: automaton already contains an initial state")
@@ -65,7 +73,7 @@ class DFAutomaton:
         print("ALPHABET (Sigma): ", self.alphabet)
         print("TRANSITION FUNCION (delta): Q x Sigma -> Q")
         print("INITIAL STATE: ", self.initNode.label)
-        print("ACCEPTING STATES: TODO")
+        print("ACCEPTING STATES: ", set(map(lambda state: state.printState(), self.accNodes)))
         print()
 
 
