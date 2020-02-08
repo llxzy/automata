@@ -1,5 +1,6 @@
 from dfa import *
 import pytest
+import copy
 
 
 ALPHABET = {"a", "b", "c"}
@@ -16,19 +17,20 @@ Q1.addEdge("b", Q_INIT)
 Q2.addEdge("a", Q_FINAL)
 DFA.addState(Q1)
 DFA.addState(Q2)
-# DFA.addState(q3)
 DFA.addState(Q_FINAL)
-# DFA.printAutomaton()
+
 
 def test_accepting():
     assert accepts("babaaa", DFA)
     assert accepts("aaa", DFA)
     assert accepts("abbbbbbbbabaaa", DFA)
 
+
 def test_not_accepting():
     assert not accepts("babaa", DFA)
     assert not accepts("a", DFA)
     assert not accepts("aaabaaaa", DFA)
+
 
 def test_state_not_in_alphabet():
     m = DFAutomaton(ALPHABET)
@@ -39,13 +41,11 @@ def test_state_not_in_alphabet():
         m.addState(q)
         
 
-# node outside alphabet
-# q3 = State()
-# q2.addEdge("d", q3)
+def test_remove_unreachable():
+    dfa = copy.deepcopy(DFA)
+    redundantState = State("qred", True)
+    dfa.addState(redundantState)
+    
+    dfa = removeUnreachable(dfa)
+    assert not redundantState in dfa.states
 
-
-# print(accepts("babaaa", DFA))
-# print(accepts("babaab", DFA))
-# print(accepts("a", DFA))
-# print(accepts("aaaaaaaaaaa", DFA))
-# print(accepts("aaa", DFA))
