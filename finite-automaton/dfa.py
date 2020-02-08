@@ -1,7 +1,7 @@
 import typing
 import exceptions
 
-#TODO
+# TODO
 # importing automata setup from a json/other file
 # error if automaton doesnt contain accepting/initial states
 # add accepted alphabet only
@@ -35,7 +35,7 @@ class DFAutomaton:
         self.accNodes = set()
         self.alphabet = alphabet
 
-    def addNode(self, st):
+    def addState(self, st):
         if st.label in [state.label for state in self.states]:
             """
             Checks whether the automata already contains a state with the label.
@@ -64,6 +64,13 @@ class DFAutomaton:
     def loadFromJson(self, filename: str):
         # json format is specified in TODO add
         # with open(filename, "r") as fnm:
+        pass
+
+    def dfaAddEdge(self, frm, to, symbol):
+        # checks whether states exits, if symbol is in alphabet, adds edge between symbols
+        pass
+
+    def makeTotal(self):
         pass
 
     def printAutomaton(self):
