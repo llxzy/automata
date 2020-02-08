@@ -15,3 +15,11 @@ class NodeLabelError(Exception):
 
     def __str__(self):
         return self.message
+        
+class InitStateError(Exception):
+    def __init__(self):
+        self.message = "DFA has no initial state."
+        super().__init__(self.message)
+
+    def __str__(self):
+        return self.message
