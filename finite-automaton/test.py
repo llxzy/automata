@@ -5,11 +5,11 @@ import copy
 
 ALPHABET = {"a", "b", "c"}
 DFA = DFAutomaton(ALPHABET)
-Q_INIT = State("q0", False, True)
+Q_INIT = State(False, True)
 DFA.addState(Q_INIT)
-Q1 = State("q1")
-Q2 = State("q2")
-Q_FINAL = State("q3", True)
+Q1 = State()
+Q2 = State()
+Q_FINAL = State(True)
 Q_INIT.addEdge("a", Q1)
 Q_INIT.addEdge("b", Q_INIT)
 Q1.addEdge("a", Q2)
@@ -34,8 +34,8 @@ def test_not_accepting():
 
 def test_state_not_in_alphabet():
     m = DFAutomaton(ALPHABET)
-    q = State("q", True, True)
-    s = State("s", True)
+    q = State(True, True)
+    s = State(True)
     q.addEdge("g", s)
     with pytest.raises(exceptions.AlphabetError):
         m.addState(q)
@@ -43,9 +43,9 @@ def test_state_not_in_alphabet():
 
 def test_remove_unreachable():
     dfa = copy.deepcopy(DFA)
-    redundantState = State("qred", True)
+    redundantState = State(True)
     dfa.addState(redundantState)
-    
+
     dfa = removeUnreachable(dfa)
     assert not redundantState in dfa.states
 

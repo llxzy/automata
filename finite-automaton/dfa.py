@@ -13,10 +13,9 @@ import copy
 
 class State:
     def __init__(self, 
-                 label: str,
                  accepting: bool = False, 
                  initial: bool = False):
-        self.label = label
+        self.label = ""
         self.edges = dict()
         self.accepting = accepting
         self.initial = initial
@@ -32,27 +31,21 @@ class State:
 
 
 class DFAutomaton:
-    # include labeling for states as q{i} | q >= 0
-
     def __init__(self, alphabet = set()):
         self.states = []
         self.initState = None
         self.accStates = set()
         self.alphabet = alphabet
+        self.stateCount = 0
 
     def addState(self, st: State):
-        if st.label in [state.label for state in self.states]:
-            """
-            Checks whether the automata already contains a state with the label.
-            """
-            raise exceptions.NodeLabelError
-
         if not self.alphabet.issuperset(st.edges.keys()):
             """
             Checks whether the automata alphabet is a superset of the keys of the state.
             If keys contain an entry that is outside the alphabet, raises an error.
             """
             raise exceptions.AlphabetError
+
 
         if st.accepting:
             self.accStates.add(st)
@@ -61,10 +54,15 @@ class DFAutomaton:
             if self.initState:
                 print("ERROR: automaton already contains an initial state")
             else:
+                # do something with this repetetive code?
+                st.label = "q" + str(self.stateCount)
                 self.initState = st
                 self.states.append(st)
+                self.stateCount += 1
         else:
+            st.label = "q" + str(self.stateCount)
             self.states.append(st)
+            self.stateCount += 1
 
     def loadFromJson(self, filename: str):
         # json format is specified in TODO add
@@ -111,13 +109,11 @@ def accepts(word: str, dfa: DFAutomaton) -> bool:
 
 
 def makeTotal(dfa: DFAutomaton) -> DFAutomaton:
-    newDFA = copy.deepcopy(dfa)
+    totalDFA = copy.deepcopy(dfa)
 
-    #TODO rename state from P, might contrast labels
-
-    p = State("P")
-    for state in newDFA.states:
-        for symbol in newDFA.alphabet:
+    p = State()
+    for state in totalDFA.states:
+        for symbol in totalDFA.alphabet:
             if symbol not in state.edges.keys():
                 state.addEdge(symbol, p)
 
@@ -125,8 +121,8 @@ def makeTotal(dfa: DFAutomaton) -> DFAutomaton:
         # adds looping edges to P
         p.addEdge(symbol, p)
     
-    newDFA.addState(p)
-    return newDFA
+    totalDFA.addState(p)
+    return totalDFA
 
 
 def removeUnreachable(dfa: DFAutomaton) -> DFAutomaton:
@@ -136,7 +132,6 @@ def removeUnreachable(dfa: DFAutomaton) -> DFAutomaton:
     while True:
         for state in currentReachable:
             edgesTo = set(map(lambda x: state.edges[x], state.edges.keys()))
-            # newReachable = newReachable.union(edgesTo)
             currentReachable = currentReachable.union(edgesTo)
         if newReachable == currentReachable:
             break
@@ -149,9 +144,6 @@ def removeUnreachable(dfa: DFAutomaton) -> DFAutomaton:
     newDFA.accStates = set(filter(lambda x: x.accepting, currentReachable))
     return newDFA
             
-
-
-
 
 def minimize(dfa: DFAutomaton) -> DFAutomaton:
     """
