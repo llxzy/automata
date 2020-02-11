@@ -8,9 +8,18 @@ class AlphabetError(Exception):
     def __str__(self):
         return self.message
         
-class InitStateError(Exception):
+class NoInitStateError(Exception):
     def __init__(self):
         self.message = "DFA has no initial state."
+        super().__init__(self.message)
+
+    def __str__(self):
+        return self.message
+
+
+class PresentInitStateError(Exception):
+    def __init__(self):
+        self.message = "Initial state already present in the DFA."
         super().__init__(self.message)
 
     def __str__(self):

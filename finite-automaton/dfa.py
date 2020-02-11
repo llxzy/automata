@@ -6,6 +6,7 @@ import copy
 # importing automata setup from a json/other file
 # error if automaton doesnt contain initial states
 # REALLY LATE -> add GUI for automata creation -> output to graphviz
+# changing which state is initial - probably will need a rework of how init state is stored
 
 """
 ----------------------------------------------
@@ -46,34 +47,22 @@ class DFAutomaton:
             """
             raise exceptions.AlphabetError
 
+        if st.initial and self.initState:
+            raise exceptions.PresentInitStateError
+        
+        st.label = "q" + str(self.stateCount)
+        self.states.append(st)
+        self.stateCount += 1
 
         if st.accepting:
             self.accStates.add(st)
-
         if st.initial:
-            if self.initState:
-                print("ERROR: automaton already contains an initial state")
-            else:
-                # do something with this repetetive code?
-                st.label = "q" + str(self.stateCount)
-                self.initState = st
-                self.states.append(st)
-                self.stateCount += 1
-        else:
-            st.label = "q" + str(self.stateCount)
-            self.states.append(st)
-            self.stateCount += 1
+            self.initState = st
+
 
     def loadFromJson(self, filename: str):
         # json format is specified in TODO add
         # with open(filename, "r") as fnm:
-        pass
-
-    def dfaAddEdge(self, 
-                   frm: State, 
-                   to: State, 
-                   symbol: str):
-        # checks whether states exits, if symbol is in alphabet, adds edge between symbols
         pass
 
     def printAutomaton(self):
@@ -95,7 +84,7 @@ def accepts(word: str, dfa: DFAutomaton) -> bool:
     if dfa.initState:
         currentState = dfa.initState
     else:
-        raise exceptions.InitStateError
+        raise exceptions.NoInitStateError
 
     currentWord = word
     while currentWord:
