@@ -1,3 +1,3 @@
 # automata
+DFA implementation
 
-Implementations of various objects from automata theory
